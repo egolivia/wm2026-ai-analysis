@@ -103,18 +103,22 @@ See *Feature Engineering* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](
 - Models tested: Logistic Regression, Random Forest, Gradient Boosting
 - Why these models were chosen: Logistic Regression as a linear baseline; Random Forest for robustness with small datasets; Gradient Boosting for sequential error correction which typically outperforms RF on tabular data.
 
+See *Modelltraining Iteration 1 & 2* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%20ML/notebooks/wm2026_ml_prediction.ipynb)
+
 #### 2A.4 Model Comparison and Iterations
 | Iteration | Objective | Key changes | Models used | Main metric | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Establish baseline | 6-class target, no tuning | Logistic Regression, Random Forest | 5-Fold CV Accuracy | – |
-| 2 | Reduce class imbalance | 3-class target (Gruppenphase / Viertelfinale / Halbfinale–Finale), RF hyperparameter tuning, Gradient Boosting added | Logistic Regression, Random Forest (tuned), Gradient Boosting | 5-Fold CV Accuracy | Improved accuracy, fewer sparse classes |
+| 1 | Establish baseline | 6-class target, no tuning | Logistic Regression (36.4%), Random Forest (34.0%) | 5-Fold CV Accuracy | – |
+| 2 | Reduce class imbalance | 3-class target (Gruppenphase / Viertelfinale / Halbfinale–Finale), RF hyperparameter tuning, Gradient Boosting added | LR (54.0%), RF (56.8%), GB (54.6%) | 5-Fold CV Accuracy | +22.8 pp vs Iter. 1 (best model) |
 
 See *Modelltraining Iteration 1 & 2* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%20ML/notebooks/wm2026_ml_prediction.ipynb)
 
 #### 2A.5 Evaluation and Error Analysis
 - Metrics used: 5-Fold Stratified Cross-Validation Accuracy
-- Final results: Gradient Boosting selected as final model (best CV score in Iteration 2). Model saved to `Block1 ML/models/wm2026_model.pkl`.
+- Final results: Gradient Boosting selected as final model (CV: 54.6% ± 5.9%). Random Forest achieved marginally higher CV (56.8%) but with higher variance (±6.5%); Gradient Boosting was preferred for its sequential error-correction approach on this imbalanced tabular dataset. Model saved to `Block1 ML/models/wm2026_model.pkl`.
 - Error patterns and likely causes: Limited training data per nation (max ~18 tournaments per nation) constrains model accuracy. Nations with fewer historical WM participations (e.g. Australia, South Africa) have less reliable predictions. The 3-class grouping in Iteration 2 mitigates class imbalance compared to the 6-class setup.
+
+See *Bestes Modell trainieren & speichern* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%20ML/notebooks/wm2026_ml_prediction.ipynb)
 
 #### 2A.6 Integration with Other Block(s)
 - Inputs received from other block(s): Nation name (string) from CV block via `get_top_nation(image_path)`, or directly from user text via NLP block.
@@ -142,18 +146,32 @@ See *Prompt Design* in [`Block3 NLP/notebooks/wm2026_nlp_agent.ipynb`](Block3%20
 - Approach used: Prompt engineering with GPT-4o-mini. Two-step pipeline: structured JSON extraction followed by constrained explanation generation.
 - Alternatives considered: Classical NER for nation extraction (rejected: too rigid for nicknames and multiple languages); RAG (rejected: no document corpus needed, all context fits in prompt).
 
+See *Prompt Design – Schritt 1: Nation extrahieren* in [`Block3 NLP/notebooks/wm2026_nlp_agent.ipynb`](Block3%20NLP/notebooks/wm2026_nlp_agent.ipynb)
+
 #### 2B.4 Comparison and Iterations
+
+**Extraction (Step 1):**
+
 | Iteration | Objective | Key changes | Model or prompt setup | Main metric or qualitative check | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Baseline extraction | No nation list, free output | GPT-4o-mini, simple system prompt | Correct nation extracted (manual check) | – |
 | 2 | Robust extraction | Added explicit nation list, null fallback for unknown nations, validation against list | GPT-4o-mini, structured prompt with constraints | Correct nation + correct null for edge cases | Better handling of nicknames and unsupported nations |
+
+**Explanation (Step 2):**
+
+| Iteration | Objective | Key changes | Model or prompt setup | Main metric or qualitative check | Change vs previous |
+| --- | --- | --- | --- | --- | --- |
 | 1 | Baseline explanation | Free-text output, no structure | GPT-4o-mini, 2-sentence prompt | Qualitative: readable and relevant | – |
 | 2 | Structured explanation | JSON output enforced, probabilities included, model limitation mentioned | GPT-4o-mini, detailed system prompt with JSON schema | Qualitative: consistent format, informative, honest | More structured, includes uncertainty |
+
+See *Vergleich Iter 1 vs Iter 2* and *Prompt Design – Schritt 2* in [`Block3 NLP/notebooks/wm2026_nlp_agent.ipynb`](Block3%20NLP/notebooks/wm2026_nlp_agent.ipynb)
 
 #### 2B.5 Evaluation and Error Analysis
 - Evaluation strategy: Manual qualitative evaluation on 7 test inputs covering normal cases, nicknames, unsupported nations, and empty inputs.
 - Results: Iteration 2 correctly handles all test cases including edge cases ("Nati" → Switzerland, "Oranje" → Netherlands, "Marokko" → null).
 - Error patterns and likely causes: GPT occasionally maps ambiguous nicknames to wrong nations without explicit list. Fixed in Iteration 2 via constrained prompt. Model limitation (no current squad data) is communicated in every explanation.
+
+See *Vollständige Pipeline testen* in [`Block3 NLP/notebooks/wm2026_nlp_agent.ipynb`](Block3%20NLP/notebooks/wm2026_nlp_agent.ipynb)
 
 #### 2B.6 Integration with Other Block(s)
 - Inputs received from other block(s): Prediction dict from ML block (team, prediction label, probabilities, n_titles, n_participations, last_stage).
@@ -178,27 +196,35 @@ See *Daten-Check* in [`Block2 Computer Vision/notebooks/wm2026_cv_jersey_classif
 - Image preprocessing: All images resized to 224×224, converted to RGB, normalised with ImageNet mean and std (`processor.image_mean`, `processor.image_std`).
 - Augmentation strategy (training only): Random horizontal flip, colour jitter (brightness ±0.2, contrast ±0.2, saturation ±0.2) to increase effective dataset size and robustness.
 
+See *Daten vorbereiten* in [`Block2 Computer Vision/notebooks/wm2026_cv_jersey_classifier.ipynb`](Block2%20Computer%20Vision/notebooks/wm2026_cv_jersey_classifier.ipynb)
+
 #### 2C.3 Model Selection
 - Vision model(s) used: ViT-base-patch16-224 (pretrained on ImageNet-21k), CLIP ViT-large-patch14 (zero-shot), GPT-4o (vision API).
-- Why these model(s) were chosen: ViT is the standard for image classification with the Hugging Face Trainer API (same approach as Übung 2). CLIP enables zero-shot classification without fine-tuning. GPT-4o represents the closed-source state-of-the-art, matching the Übung 2 comparison structure.
+- Why these model(s) were chosen: ViT is the standard for image classification with the Hugging Face Trainer API (same approach as Exercise 2). CLIP enables zero-shot classification without fine-tuning. GPT-4o represents the closed-source state-of-the-art, matching the Übung 2 comparison structure.
+
+See *Modell – Iteration 1* and *Modell – Iteration 2* in [`Block2 Computer Vision/notebooks/wm2026_cv_jersey_classifier.ipynb`](Block2%20Computer%20Vision/notebooks/wm2026_cv_jersey_classifier.ipynb)
 
 #### 2C.4 Model Comparison and Iterations
 | Iteration | Objective | Key changes | Model(s) used | Main metric | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Baseline transfer learning | Backbone frozen, only classifier head trained, 5 epochs, LR 2e-4 | ViT-base (ImageNet-21k) | Val Accuracy | – |
-| 2 | Full fine-tuning | Entire backbone unfrozen, 10 epochs, LR 1e-5, warmup 50 steps, weight decay 0.01 | ViT-base (ImageNet-21k) | Val Accuracy | +16.7% val accuracy vs Iter. 1 |
+| 1 | Baseline transfer learning | Backbone frozen, only classifier head trained, 5 epochs, LR 2e-4 | ViT-base (ImageNet-21k) | Val Accuracy: 15.0% | – |
+| 2 | Full fine-tuning | Entire backbone unfrozen, 10 epochs, LR 1e-5, warmup 50 steps, weight decay 0.01 | ViT-base (ImageNet-21k) | Val Accuracy: 31.7% / Test: 38.3% | +16.7 pp val accuracy vs Iter. 1 |
 
-| Model | Val / Test Accuracy |
-|---|---|
-| ViT Iter 1 (frozen) | 15.0% |
-| ViT Iter 2 (full FT) | 31.7% / 38.3% |
-| CLIP (zero-shot) | Qualitative: correct top-1 in ~60% of manual tests |
-| GPT-4o | Qualitative: correct top-1 in ~90% of manual tests; outputs binary confidence (1.0 / 0.0) rather than distributed probabilities |
+| Model | Test Accuracy | Notes |
+|---|---|---|
+| ViT Iter 1 (frozen) | 15.0% (val) | Head-only training, 5 epochs |
+| ViT Iter 2 (full FT) | 38.3% (60 images) | Full backbone fine-tuning, 10 epochs |
+| CLIP (zero-shot) | **96.7%** (58/60 images) | No fine-tuning, same test set as ViT |
+| GPT-4o (vision) | **93.8%** (15/16 nations) | 1 image per nation; outputs binary confidence |
+
+See *Modellvergleich – Quantitative Evaluation* in [`Block2 Computer Vision/notebooks/wm2026_cv_jersey_classifier.ipynb`](Block2%20Computer%20Vision/notebooks/wm2026_cv_jersey_classifier.ipynb)
 
 #### 2C.5 Evaluation and Error Analysis
 - Metrics and/or visual checks: Classification report (precision, recall, F1 per class), confusion matrix, visual inspection of example predictions.
-- Final results: Test accuracy 38.3% (random baseline: 6.25%). Model uploaded to `tschool01/wm2026-jersey-classifier`.
-- Error patterns and limitations: Nations with similar jersey colours (e.g. Germany/England both white) show higher confusion. Netherlands and Portugal had 0% recall in test set. Root cause: only 25 training images per nation with high visual similarity between some classes. CLIP and GPT-4o expected to outperform the custom model significantly.
+- Final results: ViT test accuracy 38.3% (random baseline: 6.25%). CLIP outperforms ViT with 96.7% zero-shot; GPT-4o achieves 93.8%. Model uploaded to `tschool01/wm2026-jersey-classifier`.
+- Error patterns and limitations: Nations with similar jersey colours (e.g. Germany/England both white) show higher ViT confusion. Netherlands and Portugal had 0% recall in the ViT test set. Root cause: only 25 training images per nation with high visual similarity. CLIP's strong zero-shot performance confirms the task is solvable but requires more training data or a stronger backbone for the custom model.
+
+See *Evaluation auf Test-Set* in [`Block2 Computer Vision/notebooks/wm2026_cv_jersey_classifier.ipynb`](Block2%20Computer%20Vision/notebooks/wm2026_cv_jersey_classifier.ipynb)
 
 #### 2C.6 Integration with Other Block(s)
 - Inputs received from other block(s): None (CV is the entry point of the pipeline when image is uploaded).
