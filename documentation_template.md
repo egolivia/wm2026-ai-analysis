@@ -68,6 +68,32 @@ Evidence hint: Show where each selected block contributes to the final system.
   2. **ML → NLP:** `predict_nation()` returns a dict with `prediction`, `probabilities`, `n_titles`, `n_participations`, `last_stage` which is passed to `explain_prediction_v2()`.
   3. **NLP → User:** A German-language explanation is displayed alongside the extracted JSON and prediction.
 
+**Pipeline Overview:**
+
+```
+Path A – Jersey Image
+┌─────────────────┐     nation string      ┌──────────────────────┐     prediction dict    ┌─────────────────────┐
+│  Computer Vision │ ──────────────────────▶│   ML Numeric Data    │ ──────────────────────▶│        NLP          │
+│  (ViT / CLIP /  │   e.g. "Brazil"        │  GradientBoosting    │  {prediction,          │  GPT-4o-mini        │
+│   GPT-4o Vision)│                        │  on FIFA data        │   probabilities,       │  German explanation │
+└─────────────────┘                        │  1930–2022           │   n_titles, ...}       └──────────┬──────────┘
+        ▲                                  └──────────────────────┘                                   │
+        │ jersey photo                                                                                  │
+        │                                                                                               ▼
+   [User Upload]                                                                               [Gradio UI Output]
+
+Path B – Text Question
+┌─────────────────┐     nation string      ┌──────────────────────┐     prediction dict    ┌─────────────────────┐
+│      NLP        │ ──────────────────────▶│   ML Numeric Data    │ ──────────────────────▶│        NLP          │
+│  GPT-4o-mini    │   e.g. "Switzerland"   │  (same model)        │                        │  (same model)       │
+│  extraction     │                        └──────────────────────┘                        └─────────────────────┘
+└─────────────────┘
+        ▲
+        │ free-text question
+        │
+   [User Input]
+```
+
 Guidance hint: This section should be short. The detailed work belongs in block sections.
 Evidence hint: Include one clear pipeline overview.
 
