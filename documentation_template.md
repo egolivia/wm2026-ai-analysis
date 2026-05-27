@@ -59,7 +59,7 @@ Evidence hint: Show where each selected block contributes to the final system.
 ### 1.1 Problem Definition
 - Problem statement: Given a photo of a national football team jersey, predict how far that nation will advance at the FIFA World Cup 2026 and explain the prediction in natural language.
 - Goal: Build a three-stage AI pipeline that combines image recognition, historical data analysis, and conversational explanation into a single interactive web application.
-- Success criteria: The app correctly identifies the nation from a jersey image, produces a data-driven WM stage prediction (Early Exit / Deep Run / Final Stage), and generates a clear German-language explanation with historical context.
+- Success criteria: The app correctly identifies the nation from a jersey image, produces a data-driven WM stage prediction (Gruppenphase / Viertelfinale / Halbfinale–Finale), and generates a clear German-language explanation with historical context.
 
 ### 1.2 Integration Logic
 - How the selected blocks interact: Computer Vision identifies the nation from the jersey image → ML uses the nation name to retrieve historical FIFA features and predict the WM stage → NLP receives the prediction and probabilities and generates a natural-language explanation. The user can also type a question directly, bypassing the CV step.
@@ -93,7 +93,7 @@ See *Daten laden* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%2
 - Cleaning steps: All numeric columns cast to float using `pd.to_numeric(..., errors='coerce')`. Team names harmonised: `"West Germany"` → `"Germany"`, `"United States"` → `"USA"`.
 - Preprocessing steps: Historical data filtered to 16 target nations. Finishing position mapped to 6 tournament stages (Group Stage → Champion), then to a numeric value (0–5).
 - Feature engineering and selection: 11 features computed per nation using only data from tournaments *prior* to the prediction year (no data leakage): `n_participations`, `n_titles`, `n_finals`, `n_semis`, `avg_stage_all`, `avg_stage_last3`, `last_stage`, `win_rate`, `goal_diff_pg`, `goals_for_pg`, `trend`.
-- EDA key findings: Class distribution is imbalanced — most nations reach "Early Exit" or "Deep Run", very few become champions. Brazil and Germany dominate the "Final Stage" class. Win rate and `avg_stage_all` show the highest correlation with final tournament stage. Nations with fewer than 5 participations (e.g. Australia, South Africa) have sparse feature vectors, making predictions less reliable.
+- EDA key findings: Class distribution is imbalanced — most nations reach "Gruppenphase" or "Viertelfinale", very few become champions. Brazil and Germany dominate the "Halbfinale/Finale" class. Win rate and `avg_stage_all` show the highest correlation with final tournament stage. Nations with fewer than 5 participations (e.g. Australia, South Africa) have sparse feature vectors, making predictions less reliable.
 
 See *EDA* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%20ML/notebooks/wm2026_ml_prediction.ipynb)
 
@@ -107,7 +107,7 @@ See *Feature Engineering* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](
 | Iteration | Objective | Key changes | Models used | Main metric | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Establish baseline | 6-class target, no tuning | Logistic Regression, Random Forest | 5-Fold CV Accuracy | – |
-| 2 | Reduce class imbalance | 3-class target (Early Exit / Deep Run / Final Stage), RF hyperparameter tuning, Gradient Boosting added | Logistic Regression, Random Forest (tuned), Gradient Boosting | 5-Fold CV Accuracy | Improved accuracy, fewer sparse classes |
+| 2 | Reduce class imbalance | 3-class target (Gruppenphase / Viertelfinale / Halbfinale–Finale), RF hyperparameter tuning, Gradient Boosting added | Logistic Regression, Random Forest (tuned), Gradient Boosting | 5-Fold CV Accuracy | Improved accuracy, fewer sparse classes |
 
 See *Modelltraining Iteration 1 & 2* in [`Block1 ML/notebooks/wm2026_ml_prediction.ipynb`](Block1%20ML/notebooks/wm2026_ml_prediction.ipynb)
 
