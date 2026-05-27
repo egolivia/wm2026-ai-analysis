@@ -15,3 +15,6 @@ __pycache__/
 
 # Data (large files)
 data/jerseys/
+
+# Model checkpoints (large — ViT model is on HF Hub: tschool01/wm2026-jersey-classifier)
+Block2 Computer Vision/models/
