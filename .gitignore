@@ -1,0 +1,17 @@
+# App folder has its own git repo (HF Space) — code viewable at deployment URL
+app/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data (large files)
+data/jerseys/
