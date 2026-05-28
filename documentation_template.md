@@ -57,7 +57,7 @@ Evidence hint: Show where each selected block contributes to the final system.
 ## 1. Project Foundation (Short)
 
 ### 1.1 Problem Definition
-- Problem statement: Given a photo of a national football team jersey, predict how far that nation will advance at the FIFA World Cup 2026 and explain the prediction in natural language.
+- Problem statement: Given a photo of a national football team jersey, predict how far that nation will advance at the FIFA World Cup 2026 based on historical FIFA tournament data (1930–2022), and explain the prediction in natural language.
 - Goal: Build a three-stage AI pipeline that combines image recognition, historical data analysis, and conversational explanation into a single interactive web application.
 - Success criteria: The app correctly identifies the nation from a jersey image, produces a data-driven WM stage prediction (Gruppenphase / Viertelfinale / Halbfinale–Finale), and generates a clear German-language explanation with historical context.
 
