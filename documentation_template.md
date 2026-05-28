@@ -1,4 +1,4 @@
-# AI Applications Project Documentation Template
+# WM 2026 – AI-Based World Cup Prediction
 
 Use this template to document your project concisely and completely.
 Fill in all required fields. Keep answers short and precise.
